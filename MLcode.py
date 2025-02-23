@@ -18,6 +18,9 @@ from groq import Groq
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 API_KEY = os.getenv("API_KEY")
+# Suppress TensorFlow logging
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # 0 = ALL, 1 = INFO, 2 = WARNING, 3 = ERROR
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # Disable oneDNN optimizations
 
 # Ensure API keys are set
 if not GROQ_API_KEY or not API_KEY:
