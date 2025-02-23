@@ -29,7 +29,7 @@ client = Groq(api_key=GROQ_API_KEY)
 app = Flask(__name__)
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu")  # Force CPU mode on Railway
 print(f"Using device: {device}")
 
 @app.route('/', methods=['GET'])
