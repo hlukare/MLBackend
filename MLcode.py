@@ -17,7 +17,10 @@ import tensorflow as tf
 import tempfile
 from werkzeug.utils import secure_filename
 import json
+import warnings
 
+torch.backends.cudnn.enabled = False  # Disable cuDNN
+torch.backends.cudnn.benchmark = False  # Disable cuDNN Benchmarking
 
 if not os.path.exists("classroom_activity_model.pth"):
     print("Error: classroom_activity_model.pth not found!", file=sys.stderr)
@@ -26,7 +29,10 @@ if not os.path.exists("classroom_activity_model.pth"):
 if not os.path.exists("impairment_detection_model.pth"):
     print("Error: impairment_detection_model.pth not found!", file=sys.stderr)
     exit(1)
-    
+
+warnings.filterwarnings("ignore", category=UserWarning)
+tf.get_logger().setLevel("ERROR")
+
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 API_KEY = os.getenv("API_KEY")
 
