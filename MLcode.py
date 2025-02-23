@@ -1,9 +1,4 @@
 import os
-
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # Suppress INFO and WARNING logs
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # Disable oneDNN optimizations
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU mode (prevents CUDA errors)
-
 import sys
 import torch
 from flask import Flask, request, jsonify
@@ -13,15 +8,15 @@ from PIL import Image
 from collections import Counter
 import pdfplumber
 from groq import Groq
-import tensorflow as tf
 import tempfile
-from werkzeug.utils import secure_filename
 import json
 import warnings
 
+# Disable cuDNN for PyTorch
 torch.backends.cudnn.enabled = False  # Disable cuDNN
 torch.backends.cudnn.benchmark = False  # Disable cuDNN Benchmarking
 
+# Check model files exist
 if not os.path.exists("classroom_activity_model.pth"):
     print("Error: classroom_activity_model.pth not found!", file=sys.stderr)
     exit(1)
@@ -31,7 +26,6 @@ if not os.path.exists("impairment_detection_model.pth"):
     exit(1)
 
 warnings.filterwarnings("ignore", category=UserWarning)
-tf.get_logger().setLevel("ERROR")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 API_KEY = os.getenv("API_KEY")
@@ -45,8 +39,7 @@ client = Groq(api_key=GROQ_API_KEY)
 
 app = Flask(__name__)
 
-
-device = torch.device("cpu")  # Force CPU mode on Railway
+device = torch.device("cpu")  # Force CPU mode
 print(f"Using device: {device}")
 
 @app.route('/', methods=['GET'])
@@ -66,8 +59,8 @@ transform_classroom = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
+# Load classroom activity model
 classroom_model = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
-
 for param in classroom_model.parameters():
     param.requires_grad = False
 
@@ -78,6 +71,7 @@ classroom_model.fc = torch.nn.Sequential(
     torch.nn.Linear(256, len(CLASSES)),
     torch.nn.Softmax(dim=1)
 )
+
 
 # Load classroom activity model on CPU
 classroom_model.load_state_dict(torch.load("classroom_activity_model.pth", map_location="cpu"))  # 🔹 Ensure CPU load
