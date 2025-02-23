@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+openai
+pydantic
+langdetect
+redis
+requests
+dotenv
+fastapi
+uvicorn
+torch 
