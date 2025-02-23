@@ -12,3 +12,8 @@ torch
 flask
 numpy
 torchvision
+werkzeug
+pillow
+pdfplumber
+groq
+tensorflow
