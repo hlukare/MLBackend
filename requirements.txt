@@ -11,4 +11,4 @@ uvicorn
 torch
 flask
 numpy
-
+torchvision
