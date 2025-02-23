@@ -11,15 +11,12 @@ from werkzeug.utils import secure_filename
 from torchvision import models, transforms
 from PIL import Image
 from collections import Counter
-import os
 import pdfplumber
 from groq import Groq
 import tensorflow as tf
 import tempfile
 from werkzeug.utils import secure_filename
 import json
-import os
-from groq import Groq
 
 
 if not os.path.exists("classroom_activity_model.pth"):
@@ -607,4 +604,5 @@ def calculate_institute_score():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=False)
+
