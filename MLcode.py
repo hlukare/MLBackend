@@ -23,9 +23,6 @@ from groq import Groq
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 API_KEY = os.getenv("API_KEY")
-# Suppress TensorFlow logging
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # 0 = ALL, 1 = INFO, 2 = WARNING, 3 = ERROR
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # Disable oneDNN optimizations
 
 # Ensure API keys are set
 if not GROQ_API_KEY or not API_KEY:
@@ -70,17 +67,19 @@ classroom_model.fc = torch.nn.Sequential(
     torch.nn.Softmax(dim=1)
 )
 
-classroom_model.load_state_dict(torch.load("classroom_activity_model.pth"))
-classroom_model = classroom_model.to(device)
+# Load classroom activity model on CPU
+classroom_model.load_state_dict(torch.load("classroom_activity_model.pth", map_location="cpu"))  # 🔹 Ensure CPU load
+classroom_model = classroom_model.to("cpu")  # 🔹 Force model to use CPU
 classroom_model.eval()
 
-# Parameters for second model
+# Load impairment detection model on CPU
 model_path = "impairment_detection_model.pth"
 impairment_model = models.resnet18()
 impairment_model.fc = torch.nn.Linear(impairment_model.fc.in_features, 4)  # Adjust for 4 classes
-impairment_model.load_state_dict(torch.load(model_path, map_location=device))
-impairment_model = impairment_model.to(device)
+impairment_model.load_state_dict(torch.load(model_path, map_location="cpu"))  # 🔹 Ensure CPU load
+impairment_model = impairment_model.to("cpu")  # 🔹 Force model to use CPU
 impairment_model.eval()
+
 
 class_names = ["Visual Impairment", "Hearing Impairment", "Physical Disability", "Normal Students"]
 
