@@ -1,4 +1,9 @@
 import os
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # Suppress INFO and WARNING logs
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # Disable oneDNN optimizations
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU mode (prevents CUDA errors)
+
 import torch
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
