@@ -4,6 +4,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # Suppress INFO and WARNING logs
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # Disable oneDNN optimizations
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Force CPU mode (prevents CUDA errors)
 
+import sys
 import torch
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
@@ -21,6 +22,14 @@ import os
 from groq import Groq
 
 
+if not os.path.exists("classroom_activity_model.pth"):
+    print("Error: classroom_activity_model.pth not found!", file=sys.stderr)
+    exit(1)
+
+if not os.path.exists("impairment_detection_model.pth"):
+    print("Error: impairment_detection_model.pth not found!", file=sys.stderr)
+    exit(1)
+    
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 API_KEY = os.getenv("API_KEY")
 
